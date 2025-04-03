@@ -245,6 +245,6 @@ master_crew = Crew(
 
 # The folder name is provided as input instead of specific file path
 # Files will be discovered within this folder
-folder_name = "1kjbjkb923-13813kbds"  # This can be replaced with user input
+folder_name = "dhb1f0sk-13kbsfv92"  # This can be replaced with user input
 results = master_crew.kickoff(inputs={"folder_path": folder_name, "user_input": ""})
 print(results)
