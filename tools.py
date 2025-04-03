@@ -303,6 +303,8 @@ class Insights(BaseTool):
             
             # Combine all descriptions
             all_descriptions = "\n".join(plot_descriptions)
+            with open(f"{folder_name}\\plot_analysis_report.txt", "w") as file:
+                file.write(f"""# Plot Analysis Report for {folder_name}\n\n{all_descriptions}""")
             return f"""# Plot Analysis Report for {folder_name}\n\n{all_descriptions}"""
             
         except Exception as e:

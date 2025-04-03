@@ -91,51 +91,8 @@ master_crew = Crew(
     verbose=True
 )
 
-# Function to save uploaded files in a temporary directory
-def save_uploaded_files(uploaded_files):
-    temp_dir = TemporaryDirectory()
-    for uploaded_file in uploaded_files:
-        file_path = Path(temp_dir.name) / uploaded_file.name
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-    return temp_dir.name
-
-# Streamlit UI elements
-st.title('Data Analysis, Preprocessing, and Plot Generation')
-
-st.subheader("Upload Your Dataset (CSV/Excel)")
-uploaded_files = st.file_uploader("Choose CSV or Excel files", accept_multiple_files=True, type=["csv", "xlsx", "xls"])
-
-if uploaded_files:
-    folder_path = save_uploaded_files(uploaded_files)
-    st.write("Files uploaded successfully!")
-
-    # Trigger button
-    if st.button('Start Processing'):
-        with st.spinner('Processing your files...'):
-            # Call the master crew kickoff function (process the data)
-            results = master_crew.kickoff(inputs={"folder_path": folder_path, "user_input": ""})
-            
-            # Show the output results
-            st.write("Process Completed!")
-
-            # Display Data Analysis Results
-            if 'data_analysis' in results:
-                st.subheader("Data Analysis Results")
-                st.write(results['data_analysis'])
-            
-            # Display Preprocessing Code
-            if 'preprocessing_code' in results:
-                st.subheader("Generated Preprocessing Code")
-                st.code(results['preprocessing_code'])
-            
-            # Display Plot Suggestions (if they are part of results)
-            if 'plot_suggestions' in results:
-                st.subheader("Plot Suggestions")
-                for idx, suggestion in enumerate(results['plot_suggestions']):
-                    st.write(f"**{idx+1}. Plot Name**: {suggestion['plot_name']}")
-                    st.write(f"**Columns**: {suggestion['columns']}")
-                    st.write(f"**Reasoning**: {suggestion['reasoning']}")
-
-else:
-    st.warning("Please upload at least one CSV or Excel file.")
+# The folder name is provided as input instead of specific file path
+# Files will be discovered within this folder
+folder_name = "1kjbjkb923-13813kbds"  # This can be replaced with user input
+results = master_crew.kickoff(inputs={"folder_path": folder_name, "user_input": ""})
+print(results)

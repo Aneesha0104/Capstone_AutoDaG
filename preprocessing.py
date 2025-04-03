@@ -1,157 +1,258 @@
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
-# Define the folder path
-folder_path = "u1314-14afsl141-smasdads-12234"
+# Define the folder where plots will be saved
+output_folder = "dhb1f0sk-13kbsfv92"
+os.makedirs(output_folder, exist_ok=True)  # Create the folder if it doesn't exist
 
-# Construct the updated file path
-updated_file_path = os.path.join(folder_path, "updated_titanic.csv")
+# Load the dataset
+file_path = "dhb1f0sk-13kbsfv92\\Ecommerce_Behavior.csv"
+try:
+    df = pd.read_csv(file_path)
+except FileNotFoundError:
+    print(f"Error: File not found at {file_path}")
+    exit()
+except Exception as e:
+    print(f"Error reading the file: {e}")
+    exit()
 
-# Check if the updated file exists
-if not os.path.exists(updated_file_path):
-    print(f"Error: The file {updated_file_path} does not exist.")
-else:
-    # Load the updated DataFrame
+# --- Plotting functions ---
+
+
+def save_plot(plt, filename):
+    """Saves a matplotlib plot to the specified folder."""
+    filepath = os.path.join(output_folder, filename)
     try:
-        df = pd.read_csv(updated_file_path)
+        plt.savefig(filepath)
+        print(f"Plot saved to: {filepath}")
     except Exception as e:
-        print(f"Error reading {updated_file_path}: {e}")
-        df = None
+        print(f"Error saving plot: {e}")
 
-    if df is not None:
-        # 1. Bar Plot: Survived vs. Sex
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.countplot(x="Sex", hue="Survived", data=df)
-            plt.title("Survival Rate by Sex")
-            plt.xlabel("Sex")
-            plt.ylabel("Number of Passengers")
-            plt.savefig(os.path.join(folder_path, "survived_vs_sex.png"))
-            plt.close()
-            print("Bar plot: Survived vs. Sex created successfully.")
-        except Exception as e:
-            print(f"Error creating Survived vs. Sex bar plot: {e}")
 
-        # 2. Histogram: Age Distribution
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.histplot(
-                df["Age"].dropna(), kde=True
-            )  # Drop NaN values for the histogram
-            plt.title("Age Distribution")
-            plt.xlabel("Age")
-            plt.ylabel("Frequency")
-            plt.savefig(os.path.join(folder_path, "age_distribution.png"))
-            plt.close()
-            print("Histogram: Age Distribution created successfully.")
-        except Exception as e:
-            print(f"Error creating Age Distribution histogram: {e}")
+def plot_age_distribution(df):
+    """Generates and saves a histogram of customer ages."""
+    plt.figure(figsize=(10, 6))
+    try:
+        plt.hist(df["Age"], bins=20, edgecolor="black")
+        plt.title("Age Distribution")
+        plt.xlabel("Age")
+        plt.ylabel("Frequency")
+        save_plot(plt, "age_distribution.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Age' column not found in the dataset.")
+    except Exception as e:
+        print(f"Error creating age distribution plot: {e}")
 
-        # 3. Box Plot: Fare vs. Pclass
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.boxplot(x="Pclass", y="Fare", data=df)
-            plt.title("Fare Distribution by Passenger Class")
-            plt.xlabel("Passenger Class")
-            plt.ylabel("Fare")
-            plt.savefig(os.path.join(folder_path, "fare_vs_pclass.png"))
-            plt.close()
-            print("Box plot: Fare vs. Pclass created successfully.")
-        except Exception as e:
-            print(f"Error creating Fare vs. Pclass box plot: {e}")
 
-        # 4. Scatter Plot: Age vs. Fare
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.scatterplot(x="Age", y="Fare", data=df)
-            plt.title("Age vs. Fare")
-            plt.xlabel("Age")
-            plt.ylabel("Fare")
-            plt.savefig(os.path.join(folder_path, "age_vs_fare.png"))
-            plt.close()
-            print("Scatter plot: Age vs. Fare created successfully.")
-        except Exception as e:
-            print(f"Error creating Age vs. Fare scatter plot: {e}")
+def plot_gender_distribution(df):
+    """Generates and saves a bar plot of gender distribution."""
+    plt.figure(figsize=(8, 6))
+    try:
+        gender_counts = df["Gender"].value_counts()
+        gender_counts.plot(kind="bar", color=["skyblue", "lightcoral"])
+        plt.title("Gender Distribution")
+        plt.xlabel("Gender")
+        plt.ylabel("Count")
+        plt.xticks(rotation=0)  # Keep x-axis labels horizontal
+        save_plot(plt, "gender_distribution.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Gender' column not found.")
+    except Exception as e:
+        print(f"Error creating gender distribution plot: {e}")
 
-        # 5. Count Plot: Pclass
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.countplot(x="Pclass", data=df)
-            plt.title("Passenger Class Distribution")
-            plt.xlabel("Passenger Class")
-            plt.ylabel("Number of Passengers")
-            plt.savefig(os.path.join(folder_path, "pclass_distribution.png"))
-            plt.close()
-            print("Count plot: Pclass created successfully.")
-        except Exception as e:
-            print(f"Error creating Pclass count plot: {e}")
 
-        # 6. Bar Plot: Survived vs. Pclass
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.countplot(x="Pclass", hue="Survived", data=df)
-            plt.title("Survival Rate by Passenger Class")
-            plt.xlabel("Passenger Class")
-            plt.ylabel("Number of Passengers")
-            plt.savefig(os.path.join(folder_path, "survived_vs_pclass.png"))
-            plt.close()
-            print("Bar plot: Survived vs. Pclass created successfully.")
-        except Exception as e:
-            print(f"Error creating Survived vs. Pclass bar plot: {e}")
+def plot_income_level_distribution(df):
+    """Generates and saves a bar plot of income level distribution."""
+    plt.figure(figsize=(10, 6))
+    try:
+        income_counts = df["Income_Level"].value_counts()
+        income_counts.plot(kind="bar", color="lightgreen")
+        plt.title("Income Level Distribution")
+        plt.xlabel("Income Level")
+        plt.ylabel("Count")
+        plt.xticks(rotation=0)
+        save_plot(plt, "income_level_distribution.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Income_Level' column not found.")
+    except Exception as e:
+        print(f"Error creating income level distribution plot: {e}")
 
-        # 7. Bar Plot: Survived vs. Embarked
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.countplot(x="Embarked", hue="Survived", data=df)
-            plt.title("Survival Rate by Embarkation Point")
-            plt.xlabel("Embarkation Point")
-            plt.ylabel("Number of Passengers")
-            plt.savefig(os.path.join(folder_path, "survived_vs_embarked.png"))
-            plt.close()
-            print("Bar plot: Survived vs. Embarked created successfully.")
-        except Exception as e:
-            print(f"Error creating Survived vs. Embarked bar plot: {e}")
 
-        # 8. Violin Plot: Age vs. Sex
-        try:
-            plt.figure(figsize=(8, 6))
-            sns.violinplot(x="Sex", y="Age", data=df)
-            plt.title("Age Distribution by Sex")
-            plt.xlabel("Sex")
-            plt.ylabel("Age")
-            plt.savefig(os.path.join(folder_path, "age_vs_sex.png"))
-            plt.close()
-            print("Violin plot: Age vs. Sex created successfully.")
-        except Exception as e:
-            print(f"Error creating Age vs. Sex violin plot: {e}")
+def plot_research_vs_income(df):
+    """Generates and saves a box plot of research time vs. income level."""
+    plt.figure(figsize=(10, 6))
+    try:
+        sns.boxplot(
+            x="Income_Level", y="Time_Spent_on_Product_Research(hours)", data=df
+        )
+        plt.title("Time Spent on Product Research vs. Income Level")
+        plt.xlabel("Income Level")
+        plt.ylabel("Time Spent on Product Research (hours)")
+        save_plot(plt, "research_vs_income.png")
+        plt.close()
+    except KeyError:
+        print(
+            "Error: 'Income_Level' or 'Time_Spent_on_Product_Research(hours)' column not found."
+        )
+    except Exception as e:
+        print(f"Error creating research vs income plot: {e}")
 
-        # 9. Facet Grid (Small Multiples): Age Distribution by Survival
-        try:
-            g = sns.FacetGrid(df, col="Survived", height=4, aspect=1.2)
-            g.map(sns.histplot, "Age")
-            g.set_titles("Survived = {col_name}")
-            plt.savefig(os.path.join(folder_path, "age_distribution_by_survival.png"))
-            plt.close()
-            print("Facet Grid: Age Distribution by Survival created successfully.")
-        except Exception as e:
-            print(f"Error creating Age Distribution by Survival facet grid: {e}")
 
-        # 10. Stacked Bar Plot: Pclass vs. Survived
-        try:
-            # Create a contingency table
-            contingency_table = pd.crosstab(df["Pclass"], df["Survived"])
+def plot_research_vs_decision(df):
+    """Generates and saves a scatter plot of research time vs. time to decision."""
+    plt.figure(figsize=(10, 6))
+    try:
+        plt.scatter(df["Time_Spent_on_Product_Research(hours)"], df["Time_to_Decision"])
+        plt.title("Time Spent on Product Research vs. Time to Decision")
+        plt.xlabel("Time Spent on Product Research (hours)")
+        plt.ylabel("Time to Decision")
+        save_plot(plt, "research_vs_decision.png")
+        plt.close()
+    except KeyError:
+        print(
+            "Error: 'Time_Spent_on_Product_Research(hours)' or 'Time_to_Decision' column not found."
+        )
+    except Exception as e:
+        print(f"Error creating research vs decision plot: {e}")
 
-            # Plotting the stacked bar plot
-            contingency_table.plot(kind="bar", stacked=True, figsize=(8, 6))
-            plt.title("Survival by Passenger Class")
-            plt.xlabel("Passenger Class")
-            plt.ylabel("Number of Passengers")
-            plt.legend(["Not Survived", "Survived"])
-            plt.savefig(os.path.join(folder_path, "pclass_vs_survived_stacked.png"))
-            plt.close()
-            print("Stacked Bar Plot: Pclass vs. Survived created successfully.")
 
-        except Exception as e:
-            print(f"Error creating Pclass vs. Survived stacked bar plot: {e}")
+def plot_category_distribution(df):
+    """Generates and saves a bar plot of purchase category distribution."""
+    plt.figure(figsize=(12, 6))
+    try:
+        category_counts = df["Purchase_Category"].value_counts()
+        category_counts.plot(kind="bar", color="coral")
+        plt.title("Purchase Category Distribution")
+        plt.xlabel("Purchase Category")
+        plt.ylabel("Count")
+        plt.xticks(rotation=45, ha="right")  # Rotate x-axis labels for readability
+        save_plot(plt, "category_distribution.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Purchase_Category' column not found.")
+    except Exception as e:
+        print(f"Error creating category distribution plot: {e}")
+
+
+def plot_purchase_amount_by_category(df):
+    """Generates and saves a box plot of purchase amount by purchase category."""
+    plt.figure(figsize=(12, 6))
+    try:
+        sns.boxplot(x="Purchase_Category", y="Purchase_Amount", data=df)
+        plt.title("Purchase Amount by Purchase Category")
+        plt.xlabel("Purchase Category")
+        plt.ylabel("Purchase Amount")
+        plt.xticks(rotation=45, ha="right")
+        save_plot(plt, "purchase_amount_by_category.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Purchase_Category' or 'Purchase_Amount' column not found.")
+    except Exception as e:
+        print(f"Error creating purchase amount by category plot: {e}")
+
+
+def plot_purchase_channel_frequency(df):
+    """Generates and saves a bar plot of purchase channel frequency."""
+    plt.figure(figsize=(10, 6))
+    try:
+        channel_counts = df["Purchase_Channel"].value_counts()
+        channel_counts.plot(kind="bar", color="skyblue")
+        plt.title("Frequency of Purchase by Purchase Channel")
+        plt.xlabel("Purchase Channel")
+        plt.ylabel("Frequency of Purchase")
+        plt.xticks(rotation=0)
+        save_plot(plt, "purchase_channel_frequency.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Purchase_Channel' column not found.")
+    except Exception as e:
+        print(f"Error creating purchase channel frequency plot: {e}")
+
+
+def plot_brand_loyalty_vs_rating(df):
+    """Generates and saves a scatter plot of brand loyalty vs product rating."""
+    plt.figure(figsize=(10, 6))
+    try:
+        plt.scatter(df["Brand_Loyalty"], df["Product_Rating"])
+        plt.title("Brand Loyalty vs. Product Rating")
+        plt.xlabel("Brand Loyalty")
+        plt.ylabel("Product Rating")
+        save_plot(plt, "brand_loyalty_vs_rating.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Brand_Loyalty' or 'Product_Rating' column not found.")
+    except Exception as e:
+        print(f"Error creating brand loyalty vs rating plot: {e}")
+
+
+def plot_satisfaction_vs_return(df):
+    """Generates and saves a box plot of customer satisfaction by return rate."""
+    plt.figure(figsize=(10, 6))
+    try:
+        sns.boxplot(x="Return_Rate", y="Customer_Satisfaction", data=df)
+        plt.title("Customer Satisfaction by Return Rate")
+        plt.xlabel("Return Rate")
+        plt.ylabel("Customer Satisfaction")
+        save_plot(plt, "satisfaction_vs_return.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Return_Rate' or 'Customer_Satisfaction' column not found.")
+    except Exception as e:
+        print(f"Error creating satisfaction vs return plot: {e}")
+
+
+def plot_discount_vs_purchase_intent(df):
+    """Generates and saves a bar plot of discount used vs purchase intent."""
+    plt.figure(figsize=(10, 6))
+    try:
+        cross_tab = pd.crosstab(df["Discount_Used"], df["Purchase_Intent"])
+        cross_tab.plot(kind="bar", stacked=False, color=["skyblue", "lightcoral"])
+        plt.title("Discount Used vs. Purchase Intent")
+        plt.xlabel("Discount Used")
+        plt.ylabel("Count")
+        plt.xticks(rotation=0)
+        plt.legend(title="Purchase Intent")
+        save_plot(plt, "discount_vs_purchase_intent.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Discount_Used' or 'Purchase_Intent' column not found.")
+    except Exception as e:
+        print(f"Error creating discount vs purchase intent plot: {e}")
+
+
+def plot_payment_method_distribution(df):
+    """Generates and saves a bar plot of payment method distribution."""
+    plt.figure(figsize=(10, 6))
+    try:
+        payment_counts = df["Payment_Method"].value_counts()
+        payment_counts.plot(kind="bar", color="lightgreen")
+        plt.title("Payment Method Distribution")
+        plt.xlabel("Payment Method")
+        plt.ylabel("Count")
+        plt.xticks(rotation=0)
+        save_plot(plt, "payment_method_distribution.png")
+        plt.close()
+    except KeyError:
+        print("Error: 'Payment_Method' column not found.")
+    except Exception as e:
+        print(f"Error creating payment method distribution plot: {e}")
+
+
+# --- Call the plotting functions ---
+plot_age_distribution(df)
+plot_gender_distribution(df)
+plot_income_level_distribution(df)
+plot_research_vs_income(df)
+plot_research_vs_decision(df)
+plot_category_distribution(df)
+plot_purchase_amount_by_category(df)
+plot_purchase_channel_frequency(df)
+plot_brand_loyalty_vs_rating(df)
+plot_satisfaction_vs_return(df)
+plot_discount_vs_purchase_intent(df)
+plot_payment_method_distribution(df)
